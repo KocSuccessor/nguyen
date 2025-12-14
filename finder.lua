@@ -116,6 +116,9 @@ end
 
 findBrainrotsInWorkspace()
 
-task.wait(5)
+task.wait(2)
 
-module:Teleport(placeId)
+while true do
+	task.wait(.5)
+	module:Teleport(placeId)
+end
