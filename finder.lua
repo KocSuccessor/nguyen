@@ -1,8 +1,8 @@
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local module = loadstring(game:HttpGet("https://raw.githubusercontent.com/LeoKholYt/roblox/main/lk_serverhop.lua"))()
-local paidWebhook = "https://discord.com/api/webhooks/1449170303451398216/NScF_F9JyVJYxb3DoqDvRnRlSuQmvAPetC3gNL3lu4l5x0nnOu2X9p8TVYOBBlPvtf4J"
-local freeWebhook = "https://discord.com/api/webhooks/1449869447430017199/vRq-1Ez2ABlNOtfzUB5nHqe4asO0e42aJBsl9-KJFRWOz3LnVmxiiD64l060YYtlQXHh"
+local paidWebhook = "https://discord.com/api/webhooks/1448505730763329607/9dAVSDfQ5ko07QMDUz3KCpu-_w1h9_DryXnIjVxHZC8iOnhrdYHIzXZFukC9MvL-yl8G"
+local freeWebhook = "https://discord.com/api/webhooks/1448505856915406979/qWjUU-RkogVbIZUGhkrqUwnkARyNVVSwhEkwvEz68TWERYXCEbXkzcVJ_HkZwqyGt_vH"
 
 local jobId = game.JobId
 local placeId = game.PlaceId
@@ -114,11 +114,32 @@ local function findBrainrotsInWorkspace()
 	sendEmbed(freeWebhook, "Brainrots Detected", free)
 end
 
+local TeleportService = game:GetService("TeleportService")
+
+local function ListServers(cursor)
+	local ServersUrl = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"
+	local Raw = game:HttpGet(ServersUrl .. ((cursor and "&cursor=" .. cursor) or ""))
+	return HttpService:JSONDecode(Raw)
+end
+
+local function TeleportToAvailableServer()
+	local Server, Next = nil, nil
+
+	repeat
+		local Servers = ListServers(Next)
+		Server = Servers.data[math.random(1, (#Servers.data / 3))]
+		Next = Servers.nextPageCursor
+	until Server
+
+	if Server.playing < Server.maxPlayers and Server.id ~= game.JobId then
+		TeleportService:TeleportToPlaceInstance(game.PlaceId, Server.id, game.Players.LocalPlayer)
+	end
+end
+
+
 findBrainrotsInWorkspace()
 
-task.wait(2)
-
 while true do
-	task.wait(.5)
-	module:Teleport(placeId)
+	task.wait(1)
+	TeleportToAvailableServer()
 end
