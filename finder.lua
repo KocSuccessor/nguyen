@@ -1,8 +1,8 @@
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local module = loadstring(game:HttpGet("https://raw.githubusercontent.com/LeoKholYt/roblox/main/lk_serverhop.lua"))()
-local paidWebhook = "https://discord.com/api/webhooks/1448505730763329607/9dAVSDfQ5ko07QMDUz3KCpu-_w1h9_DryXnIjVxHZC8iOnhrdYHIzXZFukC9MvL-yl8G"
-local freeWebhook = "https://discord.com/api/webhooks/1448505856915406979/qWjUU-RkogVbIZUGhkrqUwnkARyNVVSwhEkwvEz68TWERYXCEbXkzcVJ_HkZwqyGt_vH"
+local paidWebhook = "https://discord.com/api/webhooks/1449170303451398216/NScF_F9JyVJYxb3DoqDvRnRlSuQmvAPetC3gNL3lu4l5x0nnOu2X9p8TVYOBBlPvtf4J"
+local freeWebhook = "https://discord.com/api/webhooks/1449869447430017199/vRq-1Ez2ABlNOtfzUB5nHqe4asO0e42aJBsl9-KJFRWOz3LnVmxiiD64l060YYtlQXHh"
 
 local jobId = game.JobId
 local placeId = game.PlaceId
