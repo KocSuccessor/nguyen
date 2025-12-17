@@ -63,6 +63,8 @@ function SendMessage(url, message)
 end
 
 local function sendEmbed(url, title, lines)
+	if #lines == 0 then return end
+	
 	-- Always send the embed, regardless of ping
 	local desc = table.concat(lines, "\n")
 
