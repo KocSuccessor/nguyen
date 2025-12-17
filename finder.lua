@@ -62,30 +62,48 @@ end
 
 
 local function sendEmbed(url, title, lines)
-	if #lines == 0 then return end
+	if #lines == 0 then
+		print("No brainrots detected, skipping embed.")
+		return
+	end
 
 	local desc = table.concat(lines, "\n")
 
 	if url == freeWebhook then
-		SendMessage(paidWebhook,"<@&1444531574363131936>")
+		SendMessage(paidWebhook, "<@&1444531574363131936>")
 		desc = desc .. "\n\nPlayers in server: " .. #Players:GetPlayers() .. "/8"
 	else
 		desc = desc .. "\n\nPlayers in server: " .. #Players:GetPlayers() .. "/8"
 		desc = desc .. "\n[Click to Join!](" .. redirectUrl .. ")"
 	end
 
-	request({
-		Url = url,
-		Method = "POST",
-		Headers = {["Content-Type"] = "application/json"},
-		Body = HttpService:JSONEncode({
-			embeds = { {
+	local embedData = {
+		embeds = {
+			{
 				title = title,
 				description = desc,
-				color = 16776960
-			} }
+				color = 16776960,  -- Yellow
+			}
+		}
+	}
+
+	-- Debugging: Print out the embed data to verify its structure
+	print("Sending Embed with Data:", HttpService:JSONEncode(embedData))
+
+	local success, response = pcall(function()
+		return request({
+			Url = url,
+			Method = "POST",
+			Headers = {["Content-Type"] = "application/json"},
+			Body = HttpService:JSONEncode(embedData)
 		})
-	})
+	end)
+
+	if success then
+		print("Embed sent successfully.")
+	else
+		print("Error sending embed:", response)
+	end
 end
 
 local function findBrainrotsInWorkspace()
