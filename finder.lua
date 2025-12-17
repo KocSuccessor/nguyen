@@ -77,9 +77,9 @@ local function sendEmbed(url, title, lines)
 			lastPingTime = currentTime  -- Update the last ping time
 		end
 		desc = desc .. "\n\nPlayers in server: " .. #Players:GetPlayers() .. "/8"
+		desc = desc .. "\n[Click to Join!](" .. redirectUrl .. ")"
 	else
 		desc = desc .. "\n\nPlayers in server: " .. #Players:GetPlayers() .. "/8"
-		desc = desc .. "\n[Click to Join!](" .. redirectUrl .. ")"
 	end
 
 	-- Send the embed to the respective webhook
