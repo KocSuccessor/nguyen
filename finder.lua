@@ -17,6 +17,8 @@ local finalModelName = {
 
 local accountedBrainrots = {}
 
+local lastPingTime = 0  -- Timestamp for last ping
+
 local function strip(text)
 	return tostring(text):gsub("<.->", ""):gsub("%s+", " ")
 end
@@ -60,50 +62,37 @@ function SendMessage(url, message)
 	print("Sent")
 end
 
-
 local function sendEmbed(url, title, lines)
-	if #lines == 0 then
-		print("No brainrots detected, skipping embed.")
-		return
-	end
-
+	-- Always send the embed, regardless of ping
 	local desc = table.concat(lines, "\n")
 
-	if url == freeWebhook then
-		SendMessage(paidWebhook, "<@&1444531574363131936>")
+	-- Only ping premium webhook once every 60 seconds
+	if url == paidWebhook then
+		local currentTime = os.time()  -- Get the current time in seconds
+		if currentTime - lastPingTime >= 60 then  -- Check if 60 seconds have passed
+			-- Send the ping to the premium webhook
+			SendMessage(paidWebhook, "<@&1444531574363131936>")  -- Ping the premium role
+			lastPingTime = currentTime  -- Update the last ping time
+		end
 		desc = desc .. "\n\nPlayers in server: " .. #Players:GetPlayers() .. "/8"
 	else
 		desc = desc .. "\n\nPlayers in server: " .. #Players:GetPlayers() .. "/8"
 		desc = desc .. "\n[Click to Join!](" .. redirectUrl .. ")"
 	end
 
-	local embedData = {
-		embeds = {
-			{
+	-- Send the embed to the respective webhook
+	request({
+		Url = url,
+		Method = "POST",
+		Headers = {["Content-Type"] = "application/json"},
+		Body = HttpService:JSONEncode({
+			embeds = { {
 				title = title,
 				description = desc,
-				color = 16776960,  -- Yellow
-			}
-		}
-	}
-
-	-- Debugging: Print out the embed data to verify its structure
-	print("Sending Embed with Data:", HttpService:JSONEncode(embedData))
-
-	local success, response = pcall(function()
-		return request({
-			Url = url,
-			Method = "POST",
-			Headers = {["Content-Type"] = "application/json"},
-			Body = HttpService:JSONEncode(embedData)
+				color = 16776960  -- Yellow color
+			} }
 		})
-	end)
-
-	if success then
-		print("Embed sent successfully.")
-	else
-		print("Error sending embed:", response)
-	end
+	})
 end
 
 local function findBrainrotsInWorkspace()
@@ -173,7 +162,6 @@ local function TeleportToAvailableServer()
 		TeleportService:TeleportToPlaceInstance(game.PlaceId, Server.id, game.Players.LocalPlayer)
 	end
 end
-
 
 findBrainrotsInWorkspace()
 
